@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avalonia UI – podstawy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Wspólny styl wszystkich stron z quizami */
+:root {
+  --bg: #170f3a;
+  --bg-2: #22175a;
+  --card: #2b1f6b;
+  --card-2: #34277d;
+  --line: rgba(255, 255, 255, 0.12);
+  --text: #ffffff;
+  --muted: #c6bfeb;
+  --purple: #7c4dff;
+  --pink: #ff4fa3;
+  --yellow: #ffc83d;
+  --green: #2ed47a;
+  --red: #ff5a6e;
+  --radius: 20px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(124, 77, 255, 0.35), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(255, 79, 163, 0.22), transparent 45%),
+    var(--bg);
+  background-attachment: fixed;
+  line-height: 1.5;
+}
+
+a { color: inherit; }
+
+.wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+/* Pasek u góry */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.25rem;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.logo-badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--yellow), #ff9f1c);
+  color: var(--bg);
+  font-size: 1.1rem;
+  font-weight: 800;
+  box-shadow: 0 6px 0 #c77700;
+}
+
+.logo span.accent { color: var(--yellow); }
+
+.back {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.back:hover { color: var(--yellow); }
+
+/* Nagłówek */
+.hero h1 {
+  font-size: clamp(1.9rem, 6vw, 2.8rem);
+  line-height: 1.15;
+  margin: 0 0 12px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.hero h1 .accent { color: var(--yellow); }
+.hero p { color: var(--muted); margin: 0 0 32px; font-size: 1.05rem; }
+
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 200, 61, 0.15);
+  color: var(--yellow);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Lista quizów */
+.quiz-list { display: grid; gap: 16px; }
+
+.quiz-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.quiz-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--yellow);
+  background: var(--card-2);
+}
+.quiz-card .icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  font-size: 1.6rem;
+}
+.quiz-card h2 { margin: 4px 0 2px; font-size: 1.15rem; }
+.quiz-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.quiz-card .go {
+  margin-left: auto;
+  flex: none;
+  font-size: 1.4rem;
+  color: var(--yellow);
+}
+
+/* Przyciski */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-primary {
+  background: var(--yellow);
+  color: var(--bg);
+  box-shadow: 0 5px 0 #c77700;
+}
+.btn-primary:active { transform: translateY(3px); box-shadow: 0 2px 0 #c77700; }
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 2px solid var(--line);
+}
+.btn-ghost:hover { border-color: var(--yellow); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Quiz */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+.progress {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.progress > div {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--yellow), var(--pink));
+  border-radius: inherit;
+  transition: width 0.3s;
+}
+
+.question { font-size: 1.3rem; font-weight: 700; margin: 0 0 20px; }
+
+.answers { display: grid; gap: 12px; }
+
+.answer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.answer:hover:not(:disabled) { border-color: var(--purple); background: #2a1d6a; }
+.answer .letter {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--card-2);
+  font-weight: 800;
+  color: var(--yellow);
+}
+.answer:disabled { cursor: default; }
+.answer.correct { border-color: var(--green); background: rgba(46, 212, 122, 0.15); }
+.answer.correct .letter { background: var(--green); color: var(--bg); }
+.answer.wrong { border-color: var(--red); background: rgba(255, 90, 110, 0.15); }
+.answer.wrong .letter { background: var(--red); color: var(--bg); }
+
+.feedback {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--bg-2);
+  border-left: 5px solid var(--green);
+}
+.feedback.bad { border-left-color: var(--red); }
+.feedback strong { display: block; margin-bottom: 4px; }
+.feedback p { margin: 0; color: var(--muted); }
+
+.actions { display: flex; justify-content: flex-end; margin-top: 24px; gap: 12px; flex-wrap: wrap; }
+
+.result { text-align: center; }
+.result .score {
+  font-size: clamp(3rem, 14vw, 5rem);
+  font-weight: 800;
+  color: var(--yellow);
+  line-height: 1;
+  margin: 12px 0;
+}
+.result .actions { justify-content: center; }
+
+.review { list-style: none; padding: 0; margin: 28px 0 0; text-align: left; display: grid; gap: 10px; }
+.review li {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg-2);
+  border-left: 5px solid var(--green);
+}
+.review li.bad { border-left-color: var(--red); }
+.review li b { display: block; }
+.review li span { color: var(--muted); font-size: 0.92rem; }
+
+.hidden { display: none !important; }
+
+footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+
+@media (max-width: 520px) {
+  .panel { padding: 22px 16px; }
+  .quiz-card { padding: 16px; gap: 14px; }
+  .quiz-card .icon { width: 48px; height: 48px; font-size: 1.3rem; }
+  .actions .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="logo" href="../index.html"><span class="logo-badge">G</span> Giganci <span class="accent">Quizy</span></a>
+    <a class="back" href="../index.html">← Wszystkie quizy</a>
+  </header>
+
+  <!-- Ekran startowy -->
+  <section id="start" class="hero">
+    <span class="tag">C# · Avalonia</span>
+    <h1>Avalonia UI – <span class="accent">podstawy</span></h1>
+    <p><span id="count"></span> pytań o tworzeniu aplikacji okienkowych. Wybierz jedną odpowiedź – od razu zobaczysz, czy masz rację.</p>
+    <button class="btn btn-primary" id="startBtn">Zaczynamy! ➜</button>
+  </section>
+
+  <!-- Pytanie -->
+  <section id="quiz" class="panel hidden">
+    <div class="progress-info"><span id="qNum"></span><span id="qScore"></span></div>
+    <div class="progress"><div id="bar"></div></div>
+    <h2 class="question" id="qText"></h2>
+    <div class="answers" id="answers"></div>
+    <div class="feedback hidden" id="feedback"><strong id="fbTitle"></strong><p id="fbText"></p></div>
+    <div class="actions"><button class="btn btn-primary" id="nextBtn" disabled>Dalej ➜</button></div>
+  </section>
+
+  <!-- Wynik -->
+  <section id="result" class="panel result hidden">
+    <span class="tag">Koniec quizu</span>
+    <div class="score" id="score"></div>
+    <h2 id="resultMsg"></h2>
+    <div class="actions">
+      <button class="btn btn-primary" id="againBtn">Jeszcze raz ↻</button>
+      <a class="btn btn-ghost" href="../index.html">Inne quizy</a>
+    </div>
+    <ul class="review" id="review"></ul>
+  </section>
+</div>
+
+<script>
+// Pierwsza odpowiedź w "answers" jest poprawna – kolejność i tak jest losowana.
+const QUESTIONS = [
+  {
+    q: "Do czego służy Avalonia UI?",
+    answers: [
+      "Do tworzenia aplikacji okienkowych z interfejsem graficznym, działających na Windows, macOS i Linux",
+      "Do tworzenia gier 2D, w których rysujemy klatki w pętli",
+      "Do pisania stron internetowych, które działają tylko w przeglądarce",
+      "Do zarządzania bazami danych"
+    ],
+    explain: "Avalonia to framework do aplikacji okienkowych z GUI, które działają na Windows, macOS i Linux."
+  },
+  {
+    q: "Czym różni się Avalonia od Raylib?",
+    answers: [
+      "Raylib służy do gier i rysuje klatki w pętli, a Avalonia daje gotowe kontrolki i czeka na akcje użytkownika",
+      "Avalonia służy do gier, a Raylib do aplikacji okienkowych",
+      "Niczym – to dwie nazwy tej samej biblioteki",
+      "Raylib działa tylko na Linuxie, a Avalonia tylko na Windowsie"
+    ],
+    explain: "Raylib to biblioteka do gier – rysujemy klatki w pętli. Avalonia daje gotowe kontrolki (przyciski, pola tekstowe) i czeka na akcje użytkownika."
+  },
+  {
+    q: "Co to jest AXAML?",
+    answers: [
+      "Język znaczników podobny do HTML, który opisuje wygląd interfejsu",
+      "Nowa wersja języka C#",
+      "Program do kompilowania aplikacji Avalonia",
+      "Format plików z obrazkami używany w aplikacjach"
+    ],
+    explain: "AXAML to język znaczników podobny do HTML – opisuje, jakie kontrolki są w oknie i jak są rozmieszczone."
+  },
+  {
+    q: "Po co w projekcie Avalonia mamy dwa pliki – AXAML i C#?",
+    answers: [
+      "AXAML opisuje wygląd aplikacji, a C# jej zachowanie – można zmieniać jedno bez ruszania drugiego",
+      "AXAML opisuje zachowanie aplikacji, a C# jej wygląd",
+      "Jeden plik to kopia zapasowa drugiego",
+      "AXAML jest dla Windowsa, a C# dla Linuxa"
+    ],
+    explain: "AXAML = wygląd, C# = zachowanie. Dzięki temu jedno można zmieniać bez ruszania drugiego."
+  },
+  {
+    q: "Która trójka to kontrolki, które poznaliście na lekcji?",
+    answers: [
+      "TextBlock, Button, TextBox",
+      "Sprite, Texture, Sound",
+      "Console, Random, Math",
+      "Window, Loop, Frame"
+    ],
+    explain: "TextBlock wyświetla tekst, Button to przycisk, a TextBox to pole do wpisywania tekstu."
+  },
+  {
+    q: "Co robi StackPanel?",
+    answers: [
+      "Układa kontrolki jedna pod drugą, po kolei",
+      "Wyświetla tekst na ekranie",
+      "Tworzy pole do wpisywania tekstu",
+      "Zamyka okno aplikacji"
+    ],
+    explain: "StackPanel układa kontrolki po kolei – jedna pod drugą."
+  },
+  {
+    q: "Jak sprawić, żeby przycisk coś robił po kliknięciu?",
+    answers: [
+      "W AXAML dodajemy atrybut Click z nazwą metody, a w pliku C# piszemy tę metodę",
+      "Piszemy pętlę while, która cały czas sprawdza, czy przycisk jest wciśnięty",
+      "Zmieniamy nazwę przycisku na Click",
+      "Wpisujemy kod C# bezpośrednio w tekście przycisku"
+    ],
+    explain: "W AXAML dodajemy atrybut Click z nazwą metody, np. Click=\"OnButtonClick\", a w pliku C# piszemy tę metodę."
+  },
+  {
+    q: "Jak odczytać tekst, który użytkownik wpisał w pole TextBox?",
+    answers: [
+      "Przez właściwość Text, np. MyInput.Text",
+      "Przez Console.ReadLine()",
+      "Przez właściwość Content, np. MyInput.Content",
+      "Nie da się odczytać tekstu z TextBoxa"
+    ],
+    explain: "Wpisany tekst jest we właściwości Text, np. MyInput.Text."
+  }
+];
+
+const $ = id => document.getElementById(id);
+const LETTERS = "ABCD";
+let order, current, score, history;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) {
+  ["start", "quiz", "result"].forEach(s => $(s).classList.toggle("hidden", s !== id));
+  window.scrollTo(0, 0);
+}
+
+function start() {
+  order = shuffle(QUESTIONS);
+  current = 0;
+  score = 0;
+  history = [];
+  show("quiz");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const item = order[current];
+  $("qNum").textContent = `Pytanie ${current + 1} z ${order.length}`;
+  $("qScore").textContent = `Punkty: ${score}`;
+  $("bar").style.width = `${(current / order.length) * 100}%`;
+  $("qText").textContent = item.q;
+  $("feedback").classList.add("hidden");
+  $("nextBtn").disabled = true;
+  $("nextBtn").textContent = current === order.length - 1 ? "Zobacz wynik ➜" : "Dalej ➜";
+
+  const box = $("answers");
+  box.innerHTML = "";
+  shuffle(item.answers.map((text, i) => ({ text, correct: i === 0 }))).forEach((a, i) => {
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.innerHTML = `<span class="letter">${LETTERS[i]}</span><span></span>`;
+    btn.lastChild.textContent = a.text;
+    btn.dataset.correct = a.correct;
+    btn.addEventListener("click", () => choose(btn, item));
+    box.appendChild(btn);
+  });
+}
+
+function choose(btn, item) {
+  const ok = btn.dataset.correct === "true";
+  document.querySelectorAll(".answer").forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct === "true") b.classList.add("correct");
+  });
+  if (!ok) btn.classList.add("wrong");
+  if (ok) score++;
+  history.push({ q: item.q, ok, answer: item.answers[0] });
+
+  $("qScore").textContent = `Punkty: ${score}`;
+  $("bar").style.width = `${((current + 1) / order.length) * 100}%`;
+  $("feedback").classList.remove("hidden");
+  $("feedback").classList.toggle("bad", !ok);
+  $("fbTitle").textContent = ok ? "Brawo, dobrze! 🎉" : "Niestety, nie tym razem.";
+  $("fbText").textContent = item.explain;
+  $("nextBtn").disabled = false;
+  $("nextBtn").focus();
+}
+
+function next() {
+  current++;
+  if (current < order.length) renderQuestion();
+  else finish();
+}
+
+function finish() {
+  const pct = score / order.length;
+  $("score").textContent = `${score}/${order.length}`;
+  $("resultMsg").textContent =
+    pct === 1 ? "Perfekcyjnie! Jesteś Gigantem! 🏆" :
+    pct >= 0.75 ? "Świetna robota! 💪" :
+    pct >= 0.5 ? "Nieźle! Powtórz kilka rzeczy i będzie super. 👍" :
+    "Warto jeszcze raz przejrzeć lekcję. Dasz radę! 📚";
+
+  const list = $("review");
+  list.innerHTML = "";
+  history.forEach(h => {
+    const li = document.createElement("li");
+    if (!h.ok) li.className = "bad";
+    const b = document.createElement("b");
+    b.textContent = (h.ok ? "✔ " : "✘ ") + h.q;
+    const s = document.createElement("span");
+    s.textContent = h.answer;
+    li.append(b, s);
+    list.appendChild(li);
+  });
+  show("result");
+}
+
+$("count").textContent = QUESTIONS.length;
+$("startBtn").addEventListener("click", start);
+$("nextBtn").addEventListener("click", next);
+$("againBtn").addEventListener("click", start);
+</script>
+</body>
+</html>
